@@ -1,0 +1,15 @@
+/*The div that houses everything*/
+#flipogram { 
+	width: 500px;
+	height: 500px;
+	border: 1px solid red;
+}
+.radarSvg {
+	width: 100%;
+	height: 100%;
+}
+
+.radarLine {
+	stroke: grey;
+	stroke-width: 1px;
+}
