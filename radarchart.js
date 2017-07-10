@@ -99,7 +99,8 @@ flipogram.drawWebbing = function() {
 }
 
 flipogram.drawTitles = function() {
-	var labels = flipogram.d3RadarSvg.append("svg:g"); //Append a <g> to the canvas <SVG> element
+	var labelCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarTitleCenter').attr('x', '50%').attr('y', '50%')
+	var labels = labelCenter.append("svg:g"); //Append a <g> to the canvas <SVG> element
 	labels.selectAll(".radarTitle")
 		.data(flipogram.dataTitles)
 		.enter()
@@ -107,11 +108,11 @@ flipogram.drawTitles = function() {
 		.text(function(currentLabel) {
 			return currentLabel
 		})
-		.attr('x', function(_, index){ //TODO, find way to dynamically calculate position
-			return flipogram.xCenter + (flipogram.maximumTextDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes))
+		.attr('x', function(_, index){ 
+			return (flipogram.maximumTextDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes))
 		})
 		.attr('y', function(_, index) {
-        	return flipogram.yCenter + (flipogram.maximumTextDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)); 
+        	return (flipogram.maximumTextDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)); 
         })
         .attr("text-anchor", function(_, i) { //where the anchor point should be based on position of text relative to spokes
                 if (Math.cos(i * flipogram.distanceBetweenSpokes) > 0.01) {
