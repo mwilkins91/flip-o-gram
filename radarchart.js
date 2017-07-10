@@ -108,10 +108,6 @@ flipogram.drawWebbing = function() {
                         return strPoints;
                     }
                 )
-                .attr("stroke", '#000')
-                .attr("stroke-width", "1px")
-                .attr("stroke-opacity", 1)
-                .attr("fill-opacity", 0);
 }
 
 flipogram.reDraw = function() {

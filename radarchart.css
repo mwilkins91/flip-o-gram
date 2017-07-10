@@ -9,9 +9,15 @@
 	height: 100%;
 }
 
-.radarLine {
+.radarLine, .radarWeb {
 	stroke: grey;
 	stroke-width: 1px;
+}
+
+.radarWeb {
+	stroke-opacity: 1;
+	fill-opacity: 0;
+
 }
 
 .radarWebbingCenter {
