@@ -54,7 +54,8 @@ flipogram.prepVariables = function(whereToRender) {
 }
 
 flipogram.drawSpokes = function() {
-    var spokes = flipogram.d3RadarSvg.append('svg:g').attr('class', 'radarSpoke');
+    var spokeCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarSpokeCenter').attr('x', '50%').attr('y', '50%')
+    var spokes = spokeCenter.append('svg:g').attr('class', 'radarSpoke');
     
 
     spokes.selectAll('.spoke')
@@ -63,14 +64,14 @@ flipogram.drawSpokes = function() {
         .append('svg:line').attr('class', function(index) {
             return ('radarLine' + index + ' radarLine');
         })
-        .attr('x1', '50%')
-        .attr('y1', '50%')
+        .attr('x1', '0')
+        .attr('y1', '0')
         .attr('x2', function(_, index) {
             console.log((2 * Math.cos(index * flipogram.distanceBetweenSpokes)))
-            return flipogram.xCenter + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)); 
+            return (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)); 
         })
         .attr('y2', function(_, index) {
-            return flipogram.yCenter + (flipogram.maximumChartDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)); 
+            return  (flipogram.maximumChartDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)); 
         })
 }
 

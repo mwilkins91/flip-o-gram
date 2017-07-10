@@ -1,26 +1,31 @@
 /*The div that houses everything*/
-#flipogram { 
-	width: 900px;
-	height: 900px;
-	border: 1px solid red;
-}
-.radarSvg {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
+
+#flipogram {
+    width: 900px;
+    height: 900px;
+    border: 1px solid red;
 }
 
-.radarLine, .radarWeb {
-	stroke: grey;
-	stroke-width: 1px;
+.radarSvg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.radarLine,
+.radarWeb {
+    stroke: grey;
+    stroke-width: 1px;
 }
 
 .radarWeb {
-	stroke-opacity: 1;
-	fill-opacity: 0;
-
+    stroke-opacity: 1;
+    fill-opacity: 0;
 }
 
-.radarWebbingCenter, .radarTitlePosition, .radarOverlayCenter {
-	overflow: visible;
+.radarWebbingCenter,
+.radarTitlePosition,
+.radarOverlayCenter,
+.radarSpokeCenter {
+    overflow: visible;
 }
