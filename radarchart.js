@@ -35,14 +35,22 @@ flipogram.prepVariables = function(whereToRender) {
     flipogram.d3RadarSvg = flipogram.d3RadarDiv.append('svg').attr('class', 'radarSvg').attr('id', 'radarSvg');
     flipogram.$RadarSvg = $('#radarSvg')
 
-    flipogram.marginAroundChart = 0.6; 
+    flipogram.marginAroundChart = 0.7; 
     var radarDivWidth = $(flipogram.$radarDiv).width();
     var radarDivHeight = $(flipogram.$radarDiv).height();
-    var absoluteMaxDiamete = Math.min(radarDivWidth * 2, radarDivHeight * 2);
-    flipogram.maximumChartDiameter = absoluteMaxDiamete - (absoluteMaxDiamete * flipogram.marginAroundChart);
+    var absoluteMaxDiameter = Math.min(radarDivWidth * 2, radarDivHeight * 2);
+    flipogram.maximumChartDiameter = absoluteMaxDiameter - (absoluteMaxDiameter * flipogram.marginAroundChart);
+    flipogram.radius = (flipogram.maximumChartDiameter / 2)
+    flipogram.maximumTextDiameter = flipogram.maximumChartDiameter + (flipogram.maximumChartDiameter * 0.1)
+    
+
+    flipogram.xCenter = radarDivWidth / 2 
+    flipogram.yCenter = radarDivHeight / 2 
+
 
     flipogram.distanceBetweenSpokes = 2 * Math.PI / flipogram.numberOfSpokes.length;
 
+    flipogram.colors =  ["#87ceeb", "#fcd72a", "#ce0058", "#70c176"] ;
 }
 
 flipogram.drawSpokes = function() {
@@ -59,37 +67,16 @@ flipogram.drawSpokes = function() {
         .attr('y1', '50%')
         .attr('x2', function(_, index) {
             console.log((2 * Math.cos(index * flipogram.distanceBetweenSpokes)))
-            return 'calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)) + ')'; 
+            return flipogram.xCenter + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)); 
         })
         .attr('y2', function(_, index) {
-            return 'calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)) + ')'; 
+            return flipogram.yCenter + (flipogram.maximumChartDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)); 
         })
-}
-
-flipogram.drawTitles = function() {
-	var labels = flipogram.d3RadarSvg.append("svg:g"); //Append a <g> to the canvas <SVG> element
-	labels.selectAll(".radarTitle")
-		.data(flipogram.dataTitles)
-		.enter()
-		.append("svg:text").attr('class', 'radarTitle')
-		.text(function(currentLabel) {
-			return currentLabel
-		})
-		.attr('x', function(_, index){ //TODO, find way to dynamically calculate position
-			console.log('calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)) + ')')
-			return 'calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)) + ')'
-		})
-}
-
-flipogram.render = function() {
-    flipogram.drawSpokes(); // draws a line for each item in flipogram.numberOfSpokes, radiating out from the center of the chart.
-    flipogram.drawWebbing()
-    //flipogram.drawTitles(); // draws the text at the end of each spoke.
 }
 
 flipogram.drawWebbing = function() {
-	var radius = (flipogram.maximumChartDiameter / 2)
-	var webbingCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarWebbingCenter').attr('x', '50%').attr('y', '50%');
+	var radius = flipogram.radius;
+	var webbingCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarWebbingCenter').attr('x', '50%').attr('y', '50%'); //append svg for centering to allow center with x/y rather than translate (better for IE)
 	 var webbing = webbingCenter.append("svg:g").attr('class', 'radarWebbing'); //positions the spoke-rings in the center of the chart (should be refactored to %)
             webbing.selectAll(".radarWeb")
                 .data(flipogram.chartLevelValues)
@@ -108,6 +95,93 @@ flipogram.drawWebbing = function() {
                         return strPoints;
                     }
                 )
+}
+
+flipogram.drawTitles = function() {
+	var labels = flipogram.d3RadarSvg.append("svg:g"); //Append a <g> to the canvas <SVG> element
+	labels.selectAll(".radarTitle")
+		.data(flipogram.dataTitles)
+		.enter()
+		.append("svg:text").attr('class', 'radarTitle')
+		.text(function(currentLabel) {
+			return currentLabel
+		})
+		.attr('x', function(_, index){ //TODO, find way to dynamically calculate position
+			return flipogram.xCenter + (flipogram.maximumTextDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes))
+		})
+		.attr('y', function(_, index) {
+        	return flipogram.yCenter + (flipogram.maximumTextDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)); 
+        })
+        .attr("text-anchor", function(_, i) { //where the anchor point should be based on position of text relative to spokes
+                if (Math.cos(i * flipogram.distanceBetweenSpokes) > 0.01) {
+                    return "start";
+                }
+                else if (Math.abs(Math.cos(i * flipogram.distanceBetweenSpokes)) <= 0.01) {
+                    return "middle";
+                }
+                else { // if cosine is strictly smaller than -0.1
+                    return "end"
+                }
+            }
+        )
+        .attr("alignment-baseline", function(_, i) { //vertical anchor point relative to spokes
+                if (Math.sin(i * flipogram.distanceBetweenSpokes) > 0.1) {
+                    return "baseline";
+                }
+                else if (Math.abs(Math.sin(i * flipogram.distanceBetweenSpokes)) <= 0.1) {
+                    return "middle";
+                }
+                else { // if sine is strictly smaller than -0.1
+                    return "hanging"
+                }
+            }
+        )
+}
+
+flipogram.drawDataOverlays = function() {
+	var radius = flipogram.radius;
+	var overlays = flipogram.d3RadarSvg.append('svg').attr('class', 'radarOverlayCenter').attr('x', '50%').attr('y', '50%')
+	overlays.selectAll(".overlay")
+        .data(flipogram.dataValues)
+        .enter()
+        .append("svg:polygon").attr('class', function(_, index) {
+        	return 'radarOverlay' + index + ' radarOverlay';
+        })
+        .attr("points",
+            function(dataOverlay) {
+                var strPoints = ""
+                for (var i = 0; i < dataOverlay.length; i++) {
+                    var x = dataOverlay[i] * radius * Math.cos(i * flipogram.distanceBetweenSpokes);
+                    var y = dataOverlay[i] * radius * Math.sin(i * flipogram.distanceBetweenSpokes);
+                    strPoints += x + "," + y + " ";
+                }
+                return strPoints;
+            }
+        )
+        .attr("stroke", function(dataOverlay, idxOverlay) {
+                return flipogram.colors[idxOverlay]
+            }
+        )
+        .attr("stroke-width", "2px")
+        .attr("stroke-opacity", 1)
+        .attr("fill", function(dataOverlay, idxOverlay) {
+                return flipogram.colors[idxOverlay]
+            }
+        )
+        .attr("fill-opacity", 0.3)
+        .attr("id", function(dataOverlay, idxOverlay) {
+                return "overlay-index-" + idxOverlay.toString()
+            }
+        )
+        .on("mouseover", function(){d3.select(this).style("fill-opacity", 0.8);})
+        .on("mouseout", function(){d3.select(this).style("fill-opacity", 0.3);});
+}
+
+flipogram.render = function() {
+    flipogram.drawSpokes(); // draws a line for each item in flipogram.numberOfSpokes, radiating out from the center of the chart.
+    flipogram.drawWebbing();
+    flipogram.drawTitles(); // draws the text at the end of each spoke.
+    flipogram.drawDataOverlays();
 }
 
 flipogram.reDraw = function() {
