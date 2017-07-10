@@ -29,22 +29,25 @@ flipogram.prepVariables = function(whereToRender) {
         flipogram.chartLevelValues.push((i + 1) / flipogram.numberOfChartLevels)
     }
 
-    flipogram.marginAroundChart = 0.6; 
-
-    flipogram.D3RadarDiv = d3.select(whereToRender);
+    flipogram.d3RadarDiv = d3.select(whereToRender);
     flipogram.$radarDiv = $(whereToRender);
 
-    flipogram.D3RadarSvg = flipogram.D3RadarDiv.append('svg').attr('class', 'radarSvg').attr('id', 'radarSvg');
+    flipogram.d3RadarSvg = flipogram.d3RadarDiv.append('svg').attr('class', 'radarSvg').attr('id', 'radarSvg');
     flipogram.$RadarSvg = $('#radarSvg')
+
+    flipogram.marginAroundChart = 0.6; 
+    var radarDivWidth = $(flipogram.$radarDiv).width();
+    var radarDivHeight = $(flipogram.$radarDiv).height();
+    var absoluteMaxDiamete = Math.min(radarDivWidth * 2, radarDivHeight * 2);
+    flipogram.maximumChartDiameter = absoluteMaxDiamete - (absoluteMaxDiamete * flipogram.marginAroundChart);
+
+    flipogram.distanceBetweenSpokes = 2 * Math.PI / flipogram.numberOfSpokes.length;
+
 }
 
 flipogram.drawSpokes = function() {
-    var distanceBetweenSpokes = 2 * Math.PI / flipogram.numberOfSpokes.length;
-    var spokes = flipogram.D3RadarSvg.append('svg:g').attr('class', 'radarSpoke');
-    var radarDivWidth = $(flipogram.$radarDiv).width();
-    var radarDivHeight = $(flipogram.$radarDiv).height();
-    var maximumChartDiameter = Math.min(radarDivWidth * 2, radarDivHeight * 2);
-    maximumChartDiameter = maximumChartDiameter - (maximumChartDiameter * flipogram.marginAroundChart);
+    var spokes = flipogram.d3RadarSvg.append('svg:g').attr('class', 'radarSpoke');
+    
 
     spokes.selectAll('.spoke')
         .data(flipogram.numberOfSpokes)
@@ -55,27 +58,60 @@ flipogram.drawSpokes = function() {
         .attr('x1', '50%')
         .attr('y1', '50%')
         .attr('x2', function(_, index) {
-            console.log((2 * Math.cos(index * distanceBetweenSpokes)))
-            return 'calc(50% + ' + (maximumChartDiameter / 2 * Math.cos(index * distanceBetweenSpokes)) + ')' //xCentre + widthChart / 2 * Math.cos(index * distanceBetweenSpokes); 
+            console.log((2 * Math.cos(index * flipogram.distanceBetweenSpokes)))
+            return 'calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)) + ')'; 
         })
         .attr('y2', function(_, index) {
-            return 'calc(50% + ' + (maximumChartDiameter / 2 * Math.sin(index * distanceBetweenSpokes)) + ')' //xCentre + widthChart / 2 * Math.cos(index * distanceBetweenSpokes); 
+            return 'calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.sin(index * flipogram.distanceBetweenSpokes)) + ')'; 
         })
 }
 
-flipogram.drawLabels = function() {
-console.log('labels')
-
+flipogram.drawTitles = function() {
+	var labels = flipogram.d3RadarSvg.append("svg:g"); //Append a <g> to the canvas <SVG> element
+	labels.selectAll(".radarTitle")
+		.data(flipogram.dataTitles)
+		.enter()
+		.append("svg:text").attr('class', 'radarTitle')
+		.text(function(currentLabel) {
+			return currentLabel
+		})
+		.attr('x', function(_, index){ //TODO, find way to dynamically calculate position
+			console.log('calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)) + ')')
+			return 'calc(50% + ' + (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)) + ')'
+		})
 }
 
 flipogram.render = function() {
-    var distanceBetweenSpokes = 2 * Math.PI / flipogram.numberOfSpokes;
-    var radarDivWidth = $(flipogram.$radarDiv).width();
-    var radarDivHeight = $(flipogram.$radarDiv).height();
-    var maximumChartDiameter = Math.min(radarDivWidth * 2, radarDivHeight * 2);
-
     flipogram.drawSpokes(); // draws a line for each item in flipogram.numberOfSpokes, radiating out from the center of the chart.
-    flipogram.drawLabels(); // draws the text at the end of each spoke.
+    flipogram.drawWebbing()
+    //flipogram.drawTitles(); // draws the text at the end of each spoke.
+}
+
+flipogram.drawWebbing = function() {
+	var radius = (flipogram.maximumChartDiameter / 2)
+	var webbingCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarWebbingCenter').attr('x', '50%').attr('y', '50%');
+	 var webbing = webbingCenter.append("svg:g").attr('class', 'radarWebbing'); //positions the spoke-rings in the center of the chart (should be refactored to %)
+            webbing.selectAll(".radarWeb")
+                .data(flipogram.chartLevelValues)
+                .enter()
+                .append("svg:polygon").attr('class', function(_, index) {
+                	return 'radarWeb' + index +' radarWeb';
+                }) //create a spoke-ring for each fraction of 1 in arrayLevels
+                .attr("points",
+                    function(chartLevelValue) {
+                        var strPoints = ""
+                        for (var spoke = 0; spoke < flipogram.numberOfSpokes.length; spoke++) {
+                            var x = chartLevelValue * radius * Math.cos(spoke * flipogram.distanceBetweenSpokes);
+                            var y = chartLevelValue * radius * Math.sin(spoke * flipogram.distanceBetweenSpokes);
+                            strPoints += x + "," + y + " ";
+                        }
+                        return strPoints;
+                    }
+                )
+                .attr("stroke", '#000')
+                .attr("stroke-width", "1px")
+                .attr("stroke-opacity", 1)
+                .attr("fill-opacity", 0);
 }
 
 flipogram.reDraw = function() {
