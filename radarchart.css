@@ -1,14 +1,18 @@
-/*The div that houses everything*/
-
+/* we should probably pass in stuff like width and height as arguments because we cant rely on css for measurement*/
 #flipogram {
-    max-width: 600px;
+    width: 825px;
     height: 600px;
     border: 1px solid red;
+    overflow: visible;
 }
 
-.radarSvg {
+#radarSvg {
     width: 100%;
     height: 100%;
+    overflow: visible;
+}
+
+#radarSvg svg {
     overflow: visible;
 }
 
@@ -23,25 +27,28 @@
     fill-opacity: 0;
 }
 
-.radarWebbingCenter,
-.radarTitlePosition,
-.radarOverlayCenter,
-.radarSpokeCenter,
-.radarTitleCenter {
+.radarWeb:first-child {
+    fill-opacity: 1;
+    fill: #fff;
+}
+
+.radarWebbingContainer,
+.radarOverlayContainer,
+.radarSpokeContainer,
+.radarLabelContainer {
     overflow: visible;
 }
 
-
-.radarTitle {
-	font-family: sans-serif;
+.radarLabel {
+    font-family: sans-serif;
 }
 
 .radarOverlay {
-	stroke-width: 2px;
-	stroke-opacity: 1;
-	fill-opacity: 0.3;
-	transition: fill-opacity 0.3s;
+    stroke-width: 2px;
+    stroke-opacity: 1;
+    fill-opacity: 0.3;
+    transition: fill-opacity 0.3s;
 }
 .radarOverlay:hover {
-	fill-opacity: 0.8;
+    fill-opacity: 0.8;
 }
