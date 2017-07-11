@@ -1,8 +1,8 @@
 /*The div that houses everything*/
 
 #flipogram {
-    width: 900px;
-    height: 900px;
+    max-width: 600px;
+    height: 600px;
     border: 1px solid red;
 }
 
@@ -29,4 +29,19 @@
 .radarSpokeCenter,
 .radarTitleCenter {
     overflow: visible;
+}
+
+
+.radarTitle {
+	font-family: sans-serif;
+}
+
+.radarOverlay {
+	stroke-width: 2px;
+	stroke-opacity: 1;
+	fill-opacity: 0.3;
+	transition: fill-opacity 0.3s;
+}
+.radarOverlay:hover {
+	fill-opacity: 0.8;
 }

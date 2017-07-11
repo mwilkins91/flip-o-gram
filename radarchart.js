@@ -1,8 +1,6 @@
 const flipogram = {};
 
 
-//colors = ["#87ceeb", "#fcd72a", "#ce0058", "#70c176"];
-
 flipogram.getData = function() {
     //Sample Data - Re build 
     flipogram.dataValues = [
@@ -16,48 +14,48 @@ flipogram.getData = function() {
 }
 
 flipogram.prepVariables = function(whereToRender) {
-
-    flipogram.numberOfSpokes = []; //An array from 0 to the number of spokes on the wheel 
-    for (var i = 0; i < flipogram.dataTitles.length; i++) {
-        flipogram.numberOfSpokes.push(i);
-    }
-
+ //**Customizable options
     flipogram.numberOfChartLevels = 5 //the number of lines that connect spokes
-
-    flipogram.chartLevelValues = []; //The values for each of the levels specified above (IE: level 1 = 0.2)
-    for (var i = 0; i < flipogram.numberOfChartLevels; i++) {
-        flipogram.chartLevelValues.push((i + 1) / flipogram.numberOfChartLevels)
-    }
-
-    flipogram.d3RadarDiv = d3.select(whereToRender);
-    flipogram.$radarDiv = $(whereToRender);
-
-    flipogram.d3RadarSvg = flipogram.d3RadarDiv.append('svg').attr('class', 'radarSvg').attr('id', 'radarSvg');
-    flipogram.$RadarSvg = $('#radarSvg')
-
     flipogram.marginAroundChart = 0.7; 
+    flipogram.colors =  ["#87ceeb", "#fcd72a", "#ce0058", "#70c176"] ;
+    flipogram.rawSelector = whereToRender;
+ //**Setup array variables
+    flipogram.numberOfSpokes = []; //An array from 0 to the number of spokes on the wheel 
+	    for (var i = 0; i < flipogram.dataTitles.length; i++) {
+	        flipogram.numberOfSpokes.push(i);
+	    }
+    flipogram.chartLevelValues = []; //The values for each of the levels specified above (IE: level 1 = 0.2)
+	    for (var i = 0; i < flipogram.numberOfChartLevels; i++) {
+	        flipogram.chartLevelValues.push((i + 1) / flipogram.numberOfChartLevels)
+	    }
+ //**Set up D3 selectors
+    flipogram.d3RadarDiv = d3.select(whereToRender);
+    flipogram.d3RadarSvg = flipogram.d3RadarDiv.append('svg').attr('class', 'radarSvg').attr('id', 'radarSvg');
+ //**Set up Jquery selectors
+    flipogram.$radarDiv = $(whereToRender);
+    flipogram.$RadarSvg = $('#radarSvg')
+ //**Set up measurement variables for drawing chart
     var radarDivWidth = $(flipogram.$radarDiv).width();
     var radarDivHeight = $(flipogram.$radarDiv).height();
     var absoluteMaxDiameter = Math.min(radarDivWidth * 2, radarDivHeight * 2);
     flipogram.maximumChartDiameter = absoluteMaxDiameter - (absoluteMaxDiameter * flipogram.marginAroundChart);
-    flipogram.radius = (flipogram.maximumChartDiameter / 2)
-    flipogram.maximumTextDiameter = flipogram.maximumChartDiameter + (flipogram.maximumChartDiameter * 0.1)
-    
-
-    flipogram.xCenter = radarDivWidth / 2 
-    flipogram.yCenter = radarDivHeight / 2 
-
-
+    flipogram.radius = (flipogram.maximumChartDiameter / 2);
+    flipogram.maximumTextDiameter = flipogram.maximumChartDiameter + (flipogram.maximumChartDiameter * 0.1);
+    flipogram.xCenter = radarDivWidth / 2; 
+    flipogram.yCenter = radarDivHeight / 2;
     flipogram.distanceBetweenSpokes = 2 * Math.PI / flipogram.numberOfSpokes.length;
-
-    flipogram.colors =  ["#87ceeb", "#fcd72a", "#ce0058", "#70c176"] ;
 }
 
 flipogram.drawSpokes = function() {
-    var spokeCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarSpokeCenter').attr('x', '50%').attr('y', '50%')
-    var spokes = spokeCenter.append('svg:g').attr('class', 'radarSpoke');
-    
-
+ //**Initialize container for spokes, to center
+    var spokeCenter = flipogram.d3RadarSvg.append('svg')
+    	.attr('class', 'radarSpokeCenter')
+    	.attr('x', '50%')
+    	.attr('y', '50%');
+ //**Initialize group to contain spokes
+    var spokes = spokeCenter.append('svg:g')
+    	.attr('class', 'radarSpoke');
+ //**Initialize loop for each spoke of the chart
     spokes.selectAll('.spoke')
         .data(flipogram.numberOfSpokes)
         .enter()
@@ -77,31 +75,41 @@ flipogram.drawSpokes = function() {
 
 flipogram.drawWebbing = function() {
 	var radius = flipogram.radius;
-	var webbingCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarWebbingCenter').attr('x', '50%').attr('y', '50%'); //append svg for centering to allow center with x/y rather than translate (better for IE)
-	 var webbing = webbingCenter.append("svg:g").attr('class', 'radarWebbing'); //positions the spoke-rings in the center of the chart (should be refactored to %)
-            webbing.selectAll(".radarWeb")
-                .data(flipogram.chartLevelValues)
-                .enter()
-                .append("svg:polygon").attr('class', function(_, index) {
-                	return 'radarWeb' + index +' radarWeb';
-                }) //create a spoke-ring for each fraction of 1 in arrayLevels
-                .attr("points",
-                    function(chartLevelValue) {
-                        var strPoints = ""
-                        for (var spoke = 0; spoke < flipogram.numberOfSpokes.length; spoke++) {
-                            var x = chartLevelValue * radius * Math.cos(spoke * flipogram.distanceBetweenSpokes);
-                            var y = chartLevelValue * radius * Math.sin(spoke * flipogram.distanceBetweenSpokes);
-                            strPoints += x + "," + y + " ";
-                        }
-                        return strPoints;
-                    }
-                )
+ //**Initialize container for the 'web' svg
+	var webbingCenter = flipogram.d3RadarSvg.append('svg')
+		.attr('class', 'radarWebbingCenter')
+		.attr('x', '50%')
+		.attr('y', '50%'); 
+ //** Initialize loop for each layer of the 'web'
+	var webbing = webbingCenter.append("svg:g").attr('class', 'radarWebbing'); //positions the spoke-rings in the center of the chart (should be refactored to %)
+    webbing.selectAll(".radarWeb")
+        .data(flipogram.chartLevelValues)
+        .enter()
+        .append("svg:polygon").attr('class', function(_, index) {
+        	return 'radarWeb' + index +' radarWeb';
+        }) //create a spoke-ring for each fraction of 1 in arrayLevels
+        .attr("points",
+            function(chartLevelValue) {
+                var strPoints = ""
+                for (var spoke = 0; spoke < flipogram.numberOfSpokes.length; spoke++) {
+                    var x = chartLevelValue * radius * Math.cos(spoke * flipogram.distanceBetweenSpokes);
+                    var y = chartLevelValue * radius * Math.sin(spoke * flipogram.distanceBetweenSpokes);
+                    strPoints += x + "," + y + " ";
+                }
+                return strPoints;
+            }
+        )
 }
 
 flipogram.drawTitles = function() {
-	var labelCenter = flipogram.d3RadarSvg.append('svg').attr('class', 'radarTitleCenter').attr('x', '50%').attr('y', '50%')
-	var labels = labelCenter.append("svg:g"); //Append a <g> to the canvas <SVG> element
-	labels.selectAll(".radarTitle")
+ //**Initialize Title container
+	var titleCenter = flipogram.d3RadarSvg.append('svg')
+		.attr('class', 'radarTitleCenter')
+		.attr('x', '50%')
+		.attr('y', '50%');
+ //**Initialize loop for each individual title
+	var titles = titleCenter.append("svg:g"); //Append a <g> to the canvas <SVG> element
+	titles.selectAll(".radarTitle")
 		.data(flipogram.dataTitles)
 		.enter()
 		.append("svg:text").attr('class', 'radarTitle')
@@ -142,15 +150,19 @@ flipogram.drawTitles = function() {
 
 flipogram.drawDataOverlays = function() {
 	var radius = flipogram.radius;
-	var overlays = flipogram.d3RadarSvg.append('svg').attr('class', 'radarOverlayCenter').attr('x', '50%').attr('y', '50%')
+ //**Initialize overlay container
+	var overlays = flipogram.d3RadarSvg.append('svg')
+		.attr('class', 'radarOverlayCenter')
+		.attr('x', '50%')
+		.attr('y', '50%');
+ //**Initialize loop for each individual overlay layer
 	overlays.selectAll(".overlay")
         .data(flipogram.dataValues)
         .enter()
         .append("svg:polygon").attr('class', function(_, index) {
         	return 'radarOverlay' + index + ' radarOverlay';
         })
-        .attr("points",
-            function(dataOverlay) {
+        .attr("points", function(dataOverlay) {
                 var strPoints = ""
                 for (var i = 0; i < dataOverlay.length; i++) {
                     var x = dataOverlay[i] * radius * Math.cos(i * flipogram.distanceBetweenSpokes);
@@ -158,25 +170,16 @@ flipogram.drawDataOverlays = function() {
                     strPoints += x + "," + y + " ";
                 }
                 return strPoints;
-            }
-        )
-        .attr("stroke", function(dataOverlay, idxOverlay) {
-                return flipogram.colors[idxOverlay]
-            }
-        )
-        .attr("stroke-width", "2px")
-        .attr("stroke-opacity", 1)
-        .attr("fill", function(dataOverlay, idxOverlay) {
-                return flipogram.colors[idxOverlay]
-            }
-        )
-        .attr("fill-opacity", 0.3)
-        .attr("id", function(dataOverlay, idxOverlay) {
-                return "overlay-index-" + idxOverlay.toString()
-            }
-        )
-        .on("mouseover", function(){d3.select(this).style("fill-opacity", 0.8);})
-        .on("mouseout", function(){d3.select(this).style("fill-opacity", 0.3);});
+            })
+        .attr("stroke", function(dataOverlay, index) {
+                return flipogram.colors[index]
+            })
+        .attr("fill", function(dataOverlay, index) {
+                return flipogram.colors[index]
+            })
+        .attr("id", function(dataOverlay, index) {
+                return "overlay-index-" + index.toString()
+            })
 }
 
 flipogram.render = function() {
@@ -186,9 +189,10 @@ flipogram.render = function() {
     flipogram.drawDataOverlays();
 }
 
-flipogram.reDraw = function() {
+flipogram.reDraw = function() { //TODO: refactor into a more efficient redraw function
 	$(flipogram.$RadarSvg).remove();
-	flipogram.init('#flipogram')
+	window.removeEventListener("resize", flipogram.reDraw);
+	flipogram.init(flipogram.rawSelector);
 
 }
 
@@ -200,6 +204,7 @@ flipogram.init = function(whereToRender) {
         flipogram.getData(); //Gets data from DB (currently, dummy data.)
         flipogram.prepVariables(whereToRender); //sets up variables for use in chart generation based on data obtained in getData();
         flipogram.render(); //Renders chart using setup from above
+        window.addEventListener("resize", flipogram.reDraw);
     }
     console.timeEnd('Radarchart Generated in:')
 }
