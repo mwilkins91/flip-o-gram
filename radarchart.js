@@ -65,7 +65,7 @@ flipogram.drawSpokes = function() {
         .attr('x1', '0')
         .attr('y1', '0')
         .attr('x2', function(_, index) {
-            console.log((2 * Math.cos(index * flipogram.distanceBetweenSpokes)))
+            //console.log((2 * Math.cos(index * flipogram.distanceBetweenSpokes)))
             return (flipogram.maximumChartDiameter / 2 * Math.cos(index * flipogram.distanceBetweenSpokes)); 
         })
         .attr('y2', function(_, index) {
@@ -183,7 +183,8 @@ flipogram.drawDataOverlays = function() {
 }
 
 flipogram.drawLegend = function() {
-	console.log('TODO: draw tables')
+	var d3Legend = flipogram.d3RadarDiv.append('div').attr('class', 'radarLegend');
+    d3Legend;
 }
 
 flipogram.render = function() {
