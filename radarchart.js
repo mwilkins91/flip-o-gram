@@ -26,7 +26,8 @@
     });
 
     // Set up container SVG
-    var d3RadarSvg = d3.select(this.selector || this[0]).append('svg').attr('id', 'radarSvg');
+    var $flipogramContainer = $(this)
+    var d3RadarSvg = d3.select(this[0]).append('svg').attr('id', 'radarSvg');
     function initCenteredSvg(className) {
       var result = d3RadarSvg
         .append('svg')
@@ -183,7 +184,37 @@
     };
 
     var drawLegend = function () {
-      d3RadarSvg.append('div').attr('class', 'hello')
+      //create the container for the legend
+      var legendContainer = d3.select($flipogramContainer[0])
+        .append('div')
+        .attr('id', 'radarLegend')
+        .attr('class', 'radarLegend clearfix')
+
+      //Create each entry for each overlay on the chart, append its label as a <p> tag
+      //Add click event listener to hide the overlay that corresponds to each legend item
+      legendContainer
+        .selectAll('.radarLegend-item')
+        .data(settings.data.categories)
+        .enter()
+        .append('div')
+          .attr('class', 'radarLegend-item clearfix')
+          .on('click', function(_, index){
+            $('#overlay-index-' + index).toggleClass('hiddenOverlay');
+            $(this).children('button').toggleClass('hiddenButton');
+          })
+          .attr('style', function(){
+            return 'width: ' + (100 / settings.data.categories.length) + '%;';
+          })
+          .append('p')
+            .text(function(text){return text})
+            .attr('class', 'radarLegend-title')
+
+      //Create a button matching the color of each overlay with the corresponding label
+      legendContainer
+        .selectAll('.radarLegend-title')
+          .data(settings.colors)
+          .append('button')
+          .attr('style', function(color){ return 'background: ' + color + ';'})
     }
 
     function render() {

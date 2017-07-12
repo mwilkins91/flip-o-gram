@@ -52,3 +52,37 @@
 .radarOverlay:hover {
     fill-opacity: 0.8;
 }
+
+
+.radarLegend {
+    padding: 40px 0;
+}
+
+.radarLegend-item {
+    float: left;
+    // position: relative;
+}
+.radarLegend-title {
+    margin-left: 30px;
+    display: inline;
+    text-align: center;
+    position: relative;
+}
+.radarLegend-item button {
+    display: block;
+    position: absolute;
+    right: 105%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    width: 20px;
+    height: 20px;
+}
+
+.hiddenOverlay {
+    visibility: hidden;
+}
+
+button.hiddenButton {
+    background: white !important;
+}
