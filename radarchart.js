@@ -2,31 +2,13 @@
 
 (function ( $ ) {
 
-  // 'this' is the jquery object that this is being called on
-
   $.fn.flipogram = function ( options ) {
 
-    var settings = $.extend({
-      // These are the defaults.
-      data: {
-        values: [],
-        labels: [1,2,3,4,5,6,7,8,9,10,11,12],
-        categories: []
-      },
-      colors: ["#87ceeb", "#fcd72a", "#ce0058", "#70c176"],
-      margin: 0.7,
-      ringsCount: 5,
-      width: 825,
-      height: 600
-    }, options );
-
-    this.css({
-      width:  settings.width + 'px',
-      height: settings.height + 'px'
-    });
+    // Extend our default options with those provided.
+    var settings = $.extend( {}, $.fn.flipogram.defaults, options );
 
     // Set up container SVG
-    var d3RadarSvg = d3.select(this.selector).append('svg').attr('id', 'radarSvg');
+    var d3RadarSvg = d3.select(this[0]).append('svg').attr('id', 'radarSvg');
 
     function initCenteredSvg(className) {
       var result = d3RadarSvg
@@ -170,6 +152,8 @@
           return 'radarOverlay' + i + ' radarOverlay';
         })
         .attr('id', function (_, i) { return "overlay-index-" + i })
+        .attr('stroke', function (_, i) { return settings.colors[i] })
+        .attr('fill',   function (_, i) { return settings.colors[i] })
         .attr('points', function (overlayData) {
           var points = "";
           $.each(overlayData, function (i, value) {
@@ -179,8 +163,6 @@
           });
           return points
         })
-        .attr('stroke', function (_, i) { return settings.colors[i] })
-        .attr('fill',   function (_, i) { return settings.colors[i] })
     };
 
     function render() {
@@ -192,5 +174,19 @@
 
     render();
   };
+
+  $.fn.flipogram.defaults = {
+    // an empty graph
+    data: {
+      values: [],
+      labels: [1,2,3,4,5,6,7,8,9,10,11,12],
+      categories: []
+    },
+    colors: ["#87ceeb", "#fcd72a", "#ce0058", "#70c176"],
+    margin: 0.7,
+    ringsCount: 5,
+    width: 825,
+    height: 600
+  }
 
 }( jQuery ));
