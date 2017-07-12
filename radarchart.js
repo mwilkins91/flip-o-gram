@@ -189,7 +189,7 @@
           .attr('class', 'radarLegend-item clearfix')
           .on('click', function(_, index){
             $('#overlay-index-' + index).toggleClass('hiddenOverlay');
-            $(this).children('.radarLegend-title').children('button').toggleClass('hiddenButton');
+            $(this).find('.radarLegend-title').children('button').toggleClass('hiddenButton');
           })
           .attr('style', function(){
             return 'width: ' + (100 / settings.data.categories.length) + '%;';
