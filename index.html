@@ -1,19 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Radar Chart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./radarchart.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div id="flipogram">
-        
-    </div>
+    <div id="flipogram"></div>
+    <script>
+    var myData = {
+        //Sample Data - Re build
+        values: [
+            [1.0, 0.9913793103448275, 0.8448275862068965, 0.8362068965517241, 0.7758620689655172, 0.7629310344827587, 0.7198275862068966, 0.7068965517241379, 0.6551724137931034, 0.4827586206896552, 0.4827586206896552, 0.47413793103448276],
+            [0.3154913294797688, 0.25410404624277455, 0.09063583815028903, 0.0, 0.5202312138728323, 0.14462427745664738, 0.324393063583815, 1.0, 0.8698265895953757, 0.16832369942196532, 0.051791907514450876, 0.30520231213872834],
+            [0.05102040816326531, 0.17346938775510207, 1.0, 0.0, 0.0, 0.7551020408163265, 0.0, 0.0, 0.0, 0.5714285714285715, 0.5714285714285715, 0.5612244897959184],
+            [0.12315270935960591, 0.3793103448275862, 0.35467980295566504, 0.019704433497536946, 1.0, 0.2660098522167488, 0.07881773399014778, 0.2758620689655173, 0.4630541871921182, 0.04926108374384237, 0.3497536945812808, 0.18719211822660098]
+        ],
+        labels: ["Management Fundamentals", "Operations Optimization", "Help Desk / Service Desk", "AECOM Technology (ACM)", "HVAC Maintenance", "Disaster Planning", "Facilities Management", "Oscilloscopes", "Cost Control", "Event Management", "Mobile Device Management", "Commercial Perimeter Protection"],
+        categories: ["All Items", "Items Receiving Traffic", "Newly Created Items", "Visitors"]
+    };
 
+    jQuery(function($) { //doc ready
+        jQuery('#flipogram').flipogram({
+            data: myData
+        });
 
+    });
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="d3.min.js"></script>
-    <script src="./radarchart.js" ></script>
+    <script src="./radarchart.js"></script>
 </body>
+
 </html>
