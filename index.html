@@ -26,8 +26,10 @@
                             categories: ["All Items", "Items Receiving Traffic", "Newly Created Items", "Visitors"]
                         };
 
-                        $(function() { //doc ready
-                          flipogram(myData); //go!
+                        jQuery(function($) { //doc ready
+                            jQuery('#flipogram').flipogram({
+                              data: myData
+                            });
                         });
                     </script>
 
