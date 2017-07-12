@@ -7,6 +7,11 @@
     // Extend our default options with those provided.
     var settings = $.extend( {}, $.fn.flipogram.defaults, options );
 
+    this.css({
+      width: settings.width,
+      height: settings.height
+    });
+
     // Set up container SVG
     var d3RadarSvg = d3.select(this[0]).append('svg').attr('id', 'radarSvg');
 
