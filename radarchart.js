@@ -182,18 +182,22 @@ flipogram.drawDataOverlays = function() {
             })
 }
 
+flipogram.drawLegend = function() {
+	console.log('TODO: draw tables')
+}
+
 flipogram.render = function() {
     flipogram.drawSpokes(); // draws a line for each item in flipogram.numberOfSpokes, radiating out from the center of the chart.
     flipogram.drawWebbing();
     flipogram.drawTitles(); // draws the text at the end of each spoke.
     flipogram.drawDataOverlays();
+    flipogram.drawLegend();
 }
 
 flipogram.reDraw = function() { //TODO: refactor into a more efficient redraw function
 	$(flipogram.$RadarSvg).remove();
 	window.removeEventListener("resize", flipogram.reDraw);
 	flipogram.init(flipogram.rawSelector);
-
 }
 
 flipogram.init = function(whereToRender) {
