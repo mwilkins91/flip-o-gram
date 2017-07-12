@@ -50,10 +50,11 @@ body {
     float: left;
     // position: relative;
 }
-.radarLegend-title {
-    margin-left: 30px;
-    display: inline;
+.radarLegend-item p {
     text-align: center;
+    
+}
+.radarLegend-title {
     position: relative;
 }
 .radarLegend-item button {

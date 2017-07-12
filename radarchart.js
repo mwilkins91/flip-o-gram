@@ -195,8 +195,9 @@
             return 'width: ' + (100 / settings.data.categories.length) + '%;';
           })
           .append('p')
-            .text(function(text){return text})
-            .attr('class', 'radarLegend-title')
+            .append('span')
+              .text(function(text){return text})
+              .attr('class', 'radarLegend-title')
 
       //Create a button matching the color of each overlay with the corresponding label
       legendContainer
