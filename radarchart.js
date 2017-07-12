@@ -26,8 +26,7 @@
     });
 
     // Set up container SVG
-    var d3RadarSvg = d3.select(this.selector).append('svg').attr('id', 'radarSvg');
-
+    var d3RadarSvg = d3.select(this.selector || this[0]).append('svg').attr('id', 'radarSvg');
     function initCenteredSvg(className) {
       var result = d3RadarSvg
         .append('svg')
@@ -183,11 +182,17 @@
         .attr('fill',   function (_, i) { return settings.colors[i] })
     };
 
+    var drawLegend = function () {
+      d3RadarSvg.append('div').attr('class', 'hello')
+    }
+
     function render() {
-      drawWebbing();
+      console.log('rendering')
       drawSpokes();
+      drawWebbing();
       drawLabels();
       drawOverlays();
+      drawLegend();
     }
 
     render();
