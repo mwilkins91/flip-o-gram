@@ -1,19 +1,14 @@
-/* we should probably pass in stuff like width and height as arguments because we cant rely on css for measurement*/
-#flipogram {
-    width: 825px;
-    height: 600px;
-    border: 1px solid red;
+body {
+    background-color: #f6f6f6;
+}
+
+#flipogram svg {
     overflow: visible;
 }
 
 #radarSvg {
     width: 100%;
     height: 100%;
-    overflow: visible;
-}
-
-#radarSvg svg {
-    overflow: visible;
 }
 
 .radarLine,
@@ -30,13 +25,6 @@
 .radarWeb:first-child {
     fill-opacity: 1;
     fill: #fff;
-}
-
-.radarWebbingContainer,
-.radarOverlayContainer,
-.radarSpokeContainer,
-.radarLabelContainer {
-    overflow: visible;
 }
 
 .radarLabel {
